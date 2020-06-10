@@ -1,0 +1,64 @@
+#General configuration
+d-i auto-install/enable boolean true
+d-i debconf/priority string critical
+d-i pkgsel/update-policy select none
+
+#Localization
+d-i debian-installer/locale string en_US.UTF-8
+d-i debian-installer/language string en
+d-i debian-installer/country string RU
+d-i console-setup/ask_detect boolean false
+
+#hostname
+d-i netcfg/get_hostname string ubuntu-server
+
+#moving netplan
+#d-i netcfg/do_not_use_netplan=true
+
+#HW clock
+d-i clock-setup/utc boolean true
+
+#time zone
+d-i time/zone string Europe/Moscow
+
+#Use a http proxy
+d-i mirror/http/proxy string
+
+#The Debian release to install
+d-i mirror/suite string bionic
+
+#user setup
+d-i passwd/user-fullname string Ubuntu 18.04 ultima user
+d-i passwd/username string user
+d-i passwd/user-password password 123456
+d-i passwd/user-password-again password 123456
+d-i user-setup/allow-password-weak boolean true
+d-i user-setup/encrypt-home boolean false
+d-i live-installer/enable boolean false
+
+#Partitioning
+d-i partman/early_command string umount /media || true
+d-i partman/unmount_active boolean true
+d-i partman-auto/choose_recipe select atomic
+d-i partman-auto/disk string /dev/sda
+d-i partman-auto/method string regular
+partman-auto partman-auto/init_automatically_partition select Guided - use entire disk
+partman-auto partman-auto/automatically_partition select
+d-i partman-auto/purge_lvm_from_device boolean true
+d-i partman/confirm_write_new_label boolean true
+d-i partman/choose_partition select finish
+d-i partman/confirm boolean true
+d-i partman/confirm_nooverwrite boolean true
+d-i partman-efi/non_efi_system boolean true
+
+
+#GRUB
+d-i grub-installer/bootdev string /dev/sda
+
+#Software selection
+d-i tasksel/first multiselect standard
+d-i finish-install/reboot_in_progress no
+d-i netcfg/disable_autoconfig boolean true
+
+#LATE COMMAND
+d-i preseed/late_command string cp -a /cdrom/packages/. /target/root/; chroot /target bash /root/ifupdown.sh; chroot /target chmod +x /root/install.sh; chroot /target bash /root/install.sh;
